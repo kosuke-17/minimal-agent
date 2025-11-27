@@ -1,0 +1,19 @@
+# uv
+uv.lock
+# uvが生成する仮想環境
+.venv/
+
+# ------------------
+
+# Python
+# Pythonキャッシュ
+__pycache__/
+# コンパイル済みPythonファイル
+*.pyc
+
+# ------------------
+
+# Bedrock AgentCore
+.bedrock_agentcore.yaml
+# ビルドアーティファクト（dependencies.zipが100MB超）
+.bedrock_agentcore/
