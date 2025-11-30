@@ -14,6 +14,13 @@ __pycache__/
 # ------------------
 
 # Bedrock AgentCore
+# 本当は.bedrock_agentcore.yamlを使いたいが、AgentCoreのバグでデプロイできないので、.bedrock_agentcore.bedrock.yamlにして回避
+.bedrock_agentcore.bedrock.yaml 
 .bedrock_agentcore.yaml
 # ビルドアーティファクト（dependencies.zipが100MB超）
 .bedrock_agentcore/
+
+# ------------------
+
+# ローカル環境
+.env

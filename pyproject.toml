@@ -8,4 +8,7 @@ dependencies = [
     "bedrock-agentcore>=1.0.7",
     "bedrock-agentcore-starter-toolkit>=0.2.0",
     "strands-agents>=1.18.0",
+    "langgraph>=0.2.0",
+    "langchain-openai>=0.2.0",
+    "python-dotenv>=1.2.1",
 ]
