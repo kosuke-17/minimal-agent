@@ -11,4 +11,6 @@ dependencies = [
     "langgraph>=0.2.0",
     "langchain-openai>=0.2.0",
     "python-dotenv>=1.2.1",
+    "deepagents>=0.2.8",
+    "tavily-python>=0.7.13",
 ]
