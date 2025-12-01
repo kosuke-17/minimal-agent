@@ -1,0 +1,83 @@
+from uuid import uuid4
+
+import streamlit as st
+from deep_agents_example import (
+    ActionRequests,
+    AgentStreamChunk,
+    DeepAgentsExampleAgent,
+)
+from dotenv import load_dotenv
+from langchain.messages import HumanMessage
+from show_message import show_message
+
+
+# https://github.com/os1ma/langchain-v1-examples/tree/main
+# 上記のリポジトリにあるDeep Agents Exampleを実行するために、写経したコードになります。
+# streamlitがまだ完全に理解できてない...
+class UIState:
+    def __init__(self) -> None:
+        self.agent = DeepAgentsExampleAgent()
+        self.new_thread()
+        self.show_approve_button = False
+
+    def new_thread(self) -> None:
+        self.thread_id = uuid4().hex
+
+
+def handle_agent_stream_chunk(chunk: AgentStreamChunk, ui_state: UIState) -> None:
+    if isinstance(chunk, ActionRequests):
+        ui_state.show_approve_button = True
+    else:
+        show_message(chunk)
+
+
+def app() -> None:
+    load_dotenv(override=True)
+
+    # UIStateを初期化
+    if "deep_agents_example_ui_state" not in st.session_state:
+        st.session_state.deep_agents_example_ui_state = UIState()
+    ui_state: UIState = st.session_state.deep_agents_example_ui_state
+
+    with st.sidebar:
+        # 新規スレッドボタン
+        clicked = st.button("新規スレッド")
+        if clicked:
+            ui_state.new_thread()
+            st.rerun()
+
+    st.title("Deep Agents Example")
+    st.write(f"thread_id: {ui_state.thread_id}")
+
+    # 会話履歴を表示
+    for m in ui_state.agent.get_messages(ui_state.thread_id):
+        show_message(m)
+
+    # ユーザーの指示を受け付ける
+    human_input = st.chat_input()
+    if human_input:
+        ui_state.show_approve_button = False
+        show_message(HumanMessage(content=human_input))
+
+        with st.spinner():
+            for chunk in ui_state.agent.stream(human_input, ui_state.thread_id):
+                handle_agent_stream_chunk(chunk, ui_state)
+
+            # 再描画のためrerun
+            st.rerun()
+
+    # 承認ボタンを表示
+    if ui_state.show_approve_button:
+        approved = st.button("承認")
+        # 承認されたらエージェントを実行
+        if approved:
+            ui_state.show_approve_button = False
+            with st.spinner():
+                for chunk in ui_state.agent.approve(ui_state.thread_id):
+                    handle_agent_stream_chunk(chunk, ui_state)
+
+            # 再描画のためrerun
+            st.rerun()
+
+
+app()
